@@ -18,7 +18,7 @@ import (
 
 	"github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes"
-	pcounter "github.com/synerex/proto_pcounter"
+	pcounter "github.com/nagata-yoshiteru/proto_pcounter"
 	api "github.com/synerex/synerex_api"
 	pb "github.com/synerex/synerex_api"
 	pbase "github.com/synerex/synerex_proto"
@@ -202,13 +202,19 @@ func sendingPCounterFile(client *sxutil.SXServiceClient) {
 			}
 
 			tp, _ := ptypes.TimestampProto(tm)
+			ws := 1.0
+			if len(token) > 7 {
+				ws, _ = strconv.ParseFloat(token[7], 32)
+			}
+			he, _ := strconv.ParseFloat(token[6], 32)
 			evt := &pcounter.PEvent{
-				Typ:    token[3],
-				Ts:     tp,
-				Seq:    atoUint(token[2]),
-				Id:     token[4],
-				Dir:    token[5],
-				Height: atoUint(token[6]),
+				Typ:       token[3],
+				Ts:        tp,
+				Seq:       atoUint(token[2]),
+				Id:        token[4],
+				Dir:       token[5],
+				Height:    float32(he),
+				WalkSpeed: float32(ws),
 			}
 			evts = append(evts, evt)
 		case "fillLevel":
